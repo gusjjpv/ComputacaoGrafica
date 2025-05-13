@@ -42,8 +42,7 @@ void translateHouse(Line house[NUM_HOUSE_LINES], int dx, int dy);
 void shearPoint(Point *p, float shearX, float shearY);
 void shearHouse(Line house[NUM_HOUSE_LINES], float shearX, float shearY);
 
-int main()
-{
+int main(){
     const float scale_factor = 1;
     const float rotation_angle = 0.0;
 
