@@ -37,16 +37,22 @@ void drawLine(Point start, Point end, unsigned char r, unsigned char g, unsigned
 void reflectPoint(Point *p, int reflectX, int reflectY, Point center);
 void reflectHouse(Line house[NUM_HOUSE_LINES], int reflectX, int reflectY);
 void espelharCasas(Line original[NUM_HOUSE_LINES], int refletirX, int refletirY, int ambos);
+void translatePoint(Point *p, int dx, int dy);
+void translateHouse(Line house[NUM_HOUSE_LINES], int dx, int dy);
 
 int main()
 {
     const float scale_factor = 1;
     const float rotation_angle = 0.0;
 
+    const int dx = 0; // deslocamento no eixo X
+    const int dy = 0; // deslocamento no eixo Y
+
     Line house[NUM_HOUSE_LINES];
     initializeHouse(house);
 
     transformHouse(house, scale_factor, rotation_angle);
+    translateHouse(house, dx, dy); // <-- NOVO: aplica translação aqui
 
     clearImage();
     drawHouse(house);
@@ -55,7 +61,7 @@ int main()
     // refletirX = 1 ativa espelhamento no eixo X
     // refletirY = 1 ativa espelhamento no eixo Y
     // ambos = 1 ativa espelhamento nos dois eixos
-    espelharCasas(house, 0, 0, 0); // exemplo: espelhar nos 3 lados
+    espelharCasas(house, 0, 0, 0); // exemplo: desativa espelhamento
 
     saveImage();
     return 0;
@@ -174,6 +180,22 @@ void espelharCasas(Line original[NUM_HOUSE_LINES], int refletirX, int refletirY,
         memcpy(casaXY, original, sizeof(Line) * NUM_HOUSE_LINES);
         reflectHouse(casaXY, 1, 1);
         drawHouse(casaXY);
+    }
+}
+
+void translatePoint(Point *p, int dx, int dy)
+{
+    p->x += dx;
+    p->y += dy;
+    clampPoint(p); // Garante que o ponto fique dentro da imagem
+}
+
+void translateHouse(Line house[NUM_HOUSE_LINES], int dx, int dy)
+{
+    for (int i = 0; i < NUM_HOUSE_LINES; i++)
+    {
+        translatePoint(&house[i].start, dx, dy);
+        translatePoint(&house[i].end, dx, dy);
     }
 }
 
