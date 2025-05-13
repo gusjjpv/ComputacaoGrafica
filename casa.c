@@ -39,6 +39,8 @@ void reflectHouse(Line house[NUM_HOUSE_LINES], int reflectX, int reflectY);
 void espelharCasas(Line original[NUM_HOUSE_LINES], int refletirX, int refletirY, int ambos);
 void translatePoint(Point *p, int dx, int dy);
 void translateHouse(Line house[NUM_HOUSE_LINES], int dx, int dy);
+void shearPoint(Point *p, float shearX, float shearY);
+void shearHouse(Line house[NUM_HOUSE_LINES], float shearX, float shearY);
 
 int main()
 {
@@ -48,11 +50,15 @@ int main()
     const int dx = 0; // deslocamento no eixo X
     const int dy = 0; // deslocamento no eixo Y
 
+    const float shearX = 0.0f; // Shear horizontal (em X)
+    const float shearY = 0.0f; // Shear vertical (em Y)
+
     Line house[NUM_HOUSE_LINES];
     initializeHouse(house);
 
     transformHouse(house, scale_factor, rotation_angle);
-    translateHouse(house, dx, dy); // <-- NOVO: aplica translação aqui
+    shearHouse(house, shearX, shearY);
+    translateHouse(house, dx, dy);
 
     clearImage();
     drawHouse(house);
@@ -196,6 +202,26 @@ void translateHouse(Line house[NUM_HOUSE_LINES], int dx, int dy)
     {
         translatePoint(&house[i].start, dx, dy);
         translatePoint(&house[i].end, dx, dy);
+    }
+}
+
+void shearPoint(Point *p, float shearX, float shearY)
+{
+    int newX = round(p->x + shearX * p->y);
+    int newY = round(p->y + shearY * p->x);
+
+    p->x = newX;
+    p->y = newY;
+
+    clampPoint(p); // Mantém dentro da imagem
+}
+
+void shearHouse(Line house[NUM_HOUSE_LINES], float shearX, float shearY)
+{
+    for (int i = 0; i < NUM_HOUSE_LINES; i++)
+    {
+        shearPoint(&house[i].start, shearX, shearY);
+        shearPoint(&house[i].end, shearX, shearY);
     }
 }
 
